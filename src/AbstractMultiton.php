@@ -264,12 +264,36 @@ abstract class AbstractMultiton implements MultitonInterface
     {
         $class = get_called_class();
 
-        if (!array_key_exists($class, self::$members)) {
+        if (!isset(self::$members[$class])) {
             self::$members[$class] = array();
             static::initializeMembers();
         }
 
         return self::$members[$class];
+    }
+
+    /**
+     * Returns an array of all keys in this multiton.
+     *
+     * @api
+     *
+     * @return array<string> All member keys.
+     */
+    final public static function memberKeys()
+    {
+        $keys = array();
+        $class = get_called_class();
+
+        if (!isset(self::$members[$class])) {
+            self::$members[$class] = array();
+            static::initializeMembers();
+        }
+        /* @var $member AbstractMultiton */
+        foreach (self::$members[$class] as $member) {
+            $keys[] = $member->key();
+        }
+        // return self::$members[$class];
+        return $keys;
     }
 
     /**
